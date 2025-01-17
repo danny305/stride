@@ -27,6 +27,10 @@ class Stride:
         keep_files=False,
         verbose: bool = False,
     ):
+
+        self.remove_files = not keep_files
+        self.verbose = verbose
+
         if input_file is not None:
             self.input_file = input_file
 
@@ -41,12 +45,10 @@ class Stride:
             self.binary = binary
         else:
             self._binary = "stride"
-            print(
-                f"No binary provided, using system level stride binary: {self._binary}"
-            )
-
-        self.remove_files = not keep_files
-        self.verbose = verbose
+            if self.verbose:
+                print(
+                    f"No binary provided, using system level stride binary: {self._binary}"
+                )
 
         self._ss = self._ss = dict(
             filename=None,
