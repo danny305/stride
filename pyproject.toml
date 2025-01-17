@@ -1,0 +1,39 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "Stride"
+version = "0.1.0"
+description = "Stride: A Python APi that wraps the STRIDE protein secondary structure prediction C library"
+authors = ["Danny J. Diaz <dannyjdiaz305@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "Stride" }]
+classifiers = [
+  "Development Status :: 1 - Development",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+  "Programming Language :: Python :: 3.9",
+]
+keywords = [
+  "proteins", 
+  "secondary structure",
+  "data-engineering", 
+  "datamining", 
+  "uniprot", 
+  "pdb", 
+  "afdb", 
+]
+license = ""
+
+
+[tool.poetry.dependencies]
+python = "^3.9"
+torch = "^2.5.0"
+
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+[tool.poetry.scripts]
+stride_api = 'stride.cli:main'

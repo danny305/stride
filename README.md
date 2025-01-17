@@ -1,5 +1,7 @@
 STRIDE: Protein secondary structure assignment from atomic coordinates
 
+Documentation: https://ssbio.readthedocs.io/en/latest/instructions/stride.html
+
 About STRIDE:
 
 STRIDE [1] is a program to recognize secondary structural elements  in
@@ -18,3 +20,17 @@ the algorithm.
  2.  Kabsch,W. & Sander,C. (1983)  Dictionary  of  protein  secondary
      structure:	   pattern   recognition   of	hydrogen-bonded	  and
      geometrical features. Biopolymers,	22: 2577-2637.
+
+
+How to use STRIDE: 
+Whole PDB entry:
+    `stride 1bed.brk -$ -k`
+
+Residue range:
+    `stride 2gsq.brk -$ -k -x76 -y202`
+
+Single chain:
+    `stride 1alv.brk -$ -k  -ra`
+
+Residue range in a chain:
+    `stride 1bmt.brk -$ -k  -ra -x651 -y740`
