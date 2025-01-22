@@ -108,7 +108,17 @@ class Stride:
         assert bin_path.is_file(), f"binary not found: {bin_path.resolve()}"
         self._binary = str(bin_path.resolve())
 
-    def assign_ss(self):
+    def assign_ss(self, input_file: Path = None, output_file: Path = None) -> None:
+
+        if input_file is not None:
+            self.input_file = input_file
+
+        if isinstance(output_file, Path) or output_file is None:
+            self.output_file = output_file
+
+        else:
+            raise TypeError("output_file must be a Path object")
+
         if self.output_file is None:
             self.output_file = self.input_file.with_suffix(".stride")
         else:
@@ -202,3 +212,41 @@ class Stride:
         )
         self._ss["ss_counts"]["n_turn"] = len(self._ss["ss_lens"].get("T", []))
         self._ss["ss_counts"]["n_coil"] = len(self._ss["ss_lens"].get("C", []))
+
+    @property
+    def ss_str(self) -> str:
+        return self._ss["one_letter_string"]
+
+    @property
+    def formatted_ss_str(self) -> str:
+        return self._ss["formatted_string"]
+
+    @property
+    def ss_counts(self) -> dict:
+        return self._ss["ss_counts"]
+
+    @property
+    def ss_lens(self) -> dict:
+        return self._ss["ss_lens"]
+
+    @property
+    def helix_tensor(self) -> torch.Tensor:
+        return self._ss["tensor"][:, 0]
+
+    @property
+    def strand_tensor(self) -> torch.Tensor:
+        return self._ss["tensor"][:, 1]
+
+    @property
+    def turn_tensor(self) -> torch.Tensor:
+        return self._ss["tensor"][:, 2]
+
+    @property
+    def coil_tensor(self) -> torch.Tensor:
+        return self._ss["tensor"][:, 3]
+
+    def residue_ss(self, res_num: int) -> str:
+        return self._ss["one_letter_string"][res_num - 1]
+
+    def residue_ss_tensor(self, res_num: int) -> torch.Tensor:
+        return self._ss["tensor_map"].get(res_num, torch.zeros(4))  # type: ignore
