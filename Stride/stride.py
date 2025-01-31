@@ -17,7 +17,7 @@ class Stride:
     binary: Path = None
     _ss = dict()
 
-    remove_files = True
+    remove_file = True
 
     def __init__(
         self,
@@ -29,11 +29,11 @@ class Stride:
         verbose: bool = False,
     ):
 
-        assert isinstance(keep_files, bool), f"keep_files must be a boolean: {keep_files}"
+        assert isinstance(keep_file, bool), f" must be a boolean: {keep_file}"
         assert isinstance(use_cache, bool), f"use_cache must be a boolean: {use_cache}"
         assert isinstance(verbose, bool), f"verbose must be a boolean: {verbose}"
 
-        self.remove_files = not keep_files
+        self.remove_file = not keep_file
         self.use_cache = use_cache
         self.verbose = verbose
 
@@ -44,7 +44,7 @@ class Stride:
             assert isinstance(
                 output_file, Path
             ), f"output_file must be a Path object: {output_file}"
-            self.remove_files = False
+            self.remove_file = False
             self.output_file = output_file
 
         if binary is not None:
@@ -128,7 +128,7 @@ class Stride:
         if self.output_file is None:
             self.output_file = self.input_file.with_suffix(".stride")
         else:
-            self.remove_files = False
+            self.remove_file = False
 
         cmd = f"{self.binary} {self.input_file} -f{self.output_file}"
 
@@ -177,7 +177,7 @@ class Stride:
         self._segment_ss()
         self._build_ss_tensor()
 
-        if self.remove_files:
+        if self.remove_file:
             if self.verbose:
                 print(f"Removing: {self.output_file}")
 
