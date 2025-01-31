@@ -24,11 +24,17 @@ class Stride:
         input_file: Path = None,
         output_file: Path = None,
         binary: Path = None,
-        keep_files=False,
+        keep_file: bool = False,
+        use_cache: bool = False,
         verbose: bool = False,
     ):
 
+        assert isinstance(keep_files, bool), f"keep_files must be a boolean: {keep_files}"
+        assert isinstance(use_cache, bool), f"use_cache must be a boolean: {use_cache}"
+        assert isinstance(verbose, bool), f"verbose must be a boolean: {verbose}"
+
         self.remove_files = not keep_files
+        self.use_cache = use_cache
         self.verbose = verbose
 
         if input_file is not None:
@@ -126,10 +132,14 @@ class Stride:
 
         cmd = f"{self.binary} {self.input_file} -f{self.output_file}"
 
-        if self.verbose:
-            print(f"Running: {cmd}")
+        if self.use_cache and self.output_file.is_file():
+            if self.verbose:
+                print(f"Using cached output file: {self.output_file}")
 
-        subprocess.call(cmd, shell=True)
+        else
+            if self.verbose:
+                print(f"Running: {cmd}")
+            subprocess.call(cmd, shell=True)
 
         self._ss = dict(
             filename=self.input_file.name,
