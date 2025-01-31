@@ -136,7 +136,7 @@ class Stride:
             if self.verbose:
                 print(f"Using cached output file: {self.output_file}")
 
-        else
+        else:
             if self.verbose:
                 print(f"Running: {cmd}")
             subprocess.call(cmd, shell=True)
