@@ -144,6 +144,10 @@ class Stride:
             ),
             ss_lens=dict(),
         )
+
+        while not self.output_file.is_file():
+            continue
+
         with self.output_file.open("r") as f:
             while True:
                 line = f.readline()
