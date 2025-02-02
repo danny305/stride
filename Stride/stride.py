@@ -1,8 +1,7 @@
-#!/usr/bin/python3.5
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 from itertools import groupby
 import re
 import os
@@ -12,18 +11,18 @@ import torch
 
 
 class Stride:
-    input_file: Path = None
-    output_file: Path = None
-    binary: Path = None
+    input_file: Optional[Path] = None
+    output_file: Optional[Path] = None
+    binary: Optional[Path] = None
     _ss = dict()
 
     remove_file = True
 
     def __init__(
         self,
-        input_file: Path = None,
-        output_file: Path = None,
-        binary: Path = None,
+        input_file: Optional[Path] = None,
+        output_file: Optional[Path] = None,
+        binary: Optional[Path] = None,
         keep_file: bool = False,
         use_cache: bool = False,
         verbose: bool = False,
@@ -56,8 +55,8 @@ class Stride:
                     f"No binary provided, using system level stride binary: {self._binary}"
                 )
 
-        self._ss = self._ss = dict(
-            filename=None,
+        self._ss = dict(
+            filename=self.input_file.name,
             one_letter_string="",
             formatted_string="",
             tensor=None,
@@ -114,7 +113,9 @@ class Stride:
         assert bin_path.is_file(), f"binary not found: {bin_path.resolve()}"
         self._binary = str(bin_path.resolve())
 
-    def assign_ss(self, input_file: Path = None, output_file: Path = None) -> None:
+    def assign_ss(
+        self, input_file: Optional[Path] = None, output_file: Optional[Path] = None
+    ) -> None:
 
         if input_file is not None:
             self.input_file = input_file
@@ -260,4 +261,4 @@ class Stride:
         return self._ss["one_letter_string"][res_num - 1]
 
     def residue_ss_tensor(self, res_num: int) -> torch.Tensor:
-        return self._ss["tensor_map"].get(res_num, torch.zeros(4))  # type: ignore
+        return self._ss["tensor_map"].get(res_num, torch.zeros(4))
