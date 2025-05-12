@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "Stride"
-version = "0.1.0"
+version = "0.1.1"
 description = "Stride: A Python APi that wraps the STRIDE protein secondary structure prediction C library"
 authors = ["Danny J. Diaz <dannyjdiaz305@gmail.com>"]
 readme = "README.md"
@@ -30,6 +30,7 @@ license = ""
 [tool.poetry.dependencies]
 python = "^3.9"
 torch = "^2.5.0"
+# stride = { version = "^1.0.0", source = "stride" } # https://github.com/danny305/stride
 
 
 [tool.pytest.ini_options]

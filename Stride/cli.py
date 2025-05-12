@@ -1,7 +1,7 @@
 from pathlib import Path
 import argparse
 
-from Stride import Stride
+from Stride import Stride, CifStride
 
 
 def cli():
@@ -12,7 +12,7 @@ def cli():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
         "-i",
-        "--pdb-file",
+        "--file",
         type=Path,
         help="Input PDB file",
     )
@@ -21,6 +21,21 @@ def cli():
         "--directory",
         type=Path,
         help="Directory containing PDB files",
+    )
+
+    file_type = parser.add_mutually_exclusive_group(required=True)
+    file_type.add_argument(
+        "-p",
+        "--pdb",
+        action="store_true",
+        help="Input file is a PDB file",
+    )
+
+    file_type.add_argument(
+        "-c",
+        "--cif",
+        action="store_true",
+        help="Input file is a CIF file",
     )
 
     parser.add_argument(
@@ -52,23 +67,54 @@ def cli():
 def main():
     args = cli()
 
-    if args.pdb_file:
-        stride = Stride(
-            input_file=args.pdb_file,
-            output_file=args.output_dir,
-            binary=args.binary,
-            keep_files=True,
-        )
-        stride.assign_ss()
-    elif args.directory:
-        for pdb_file in args.directory.glob("*.pdb"):
+    if args.file:
+        if args.pdb:
+            assert (
+                args.file.suffix == ".pdb"
+            ), f"Input file must be a PDB file: {args.file}"
             stride = Stride(
-                input_file=pdb_file,
+                input_file=args.file,
                 output_file=args.output_dir,
                 binary=args.binary,
-                bin_dirkeep_files=True,
+                keep_files=True,
             )
-            stride.assign_ss()
+        elif args.cif:
+            assert (
+                args.file.suffix == ".cif"
+            ), f"Input file must be a CIF file: {args.file}"
+            stride = CifStride(
+                input_file=args.file,
+                output_file=args.output_dir,
+                binary=args.binary,
+                keep_files=True,
+            )
+        else:
+            raise ValueError("Unsupported file type. Use --pdb or --cif.")
+
+        stride.assign_ss()
+    elif args.directory:
+        if args.pdb:
+            for pdb_file in args.directory.glob("*.pdb"):
+                stride = Stride(
+                    input_file=pdb_file,
+                    output_file=args.output_dir,
+                    binary=args.binary,
+                    bin_dirkeep_files=True,
+                )
+                stride.assign_ss()
+
+        elif args.cif:
+            for cif_file in args.directory.glob("*.cif"):
+                stride = CifStride(
+                    input_file=cif_file,
+                    output_file=args.output_dir,
+                    binary=args.binary,
+                    keep_files=True,
+                )
+                stride.assign_ss()
+
+        else:
+            raise ValueError("Unsupported file type. Use --pdb or --cif.")
 
 
 if __name__ == "__main__":

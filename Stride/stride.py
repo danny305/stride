@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from pathlib import Path
+from collections import namedtuple
 from typing import Any, Optional
 from itertools import groupby
 import re
@@ -10,6 +11,10 @@ import subprocess
 import torch
 
 
+ResStrideMetadata = namedtuple(
+    "ResStrideMetadata",
+    ["asym_id", "label_seq_id", "auth_seq_id", "auth_comp_id", "ss_id", "ss_full_name"],
+)
 class Stride:
     input_file: Optional[Path] = None
     output_file: Optional[Path] = None
@@ -35,6 +40,8 @@ class Stride:
         self.remove_file = not keep_file
         self.use_cache = use_cache
         self.verbose = verbose
+
+        self._input_file = Path()
 
         if input_file is not None:
             self.input_file = input_file
@@ -69,6 +76,8 @@ class Stride:
             ),
             ss_lens=dict(),
         )
+
+        self._res_metadata: list[ResStrideMetadata] = []
 
     @property
     def input_file(self):
@@ -156,6 +165,8 @@ class Stride:
             ss_lens=dict(),
         )
 
+        self._res_metadata = []
+
         with open(self.output_file, "r") as f:
             while True:
                 line = f.readline()
@@ -172,7 +183,16 @@ class Stride:
                     continue
                 elif tokens[0] == "ASG":
                     self._ss["one_letter_string"].append(tokens[5])
-
+                    self._res_metadata.append(
+                        ResStrideMetadata(
+                            asym_id=tokens[2],
+                            label_seq_id=tokens[4],
+                            auth_seq_id=tokens[3],
+                            auth_comp_id=tokens[1],
+                            ss_id=tokens[5],
+                            ss_full_name=tokens[6],
+                        )
+                    )
             self._ss["one_letter_string"] = "".join(self._ss["one_letter_string"])
 
         self._segment_ss()
