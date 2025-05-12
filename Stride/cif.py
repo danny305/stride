@@ -27,7 +27,6 @@ class CifStride(Stride):
     def add_stride_to_cif(self) -> None:
         assert self.cif_file.is_file(), f"cif not found: {self.cif_file.resolve()}"
 
-
         doc = gemmi.cif.read_file(str(self.cif_file))
         block = doc.sole_block()
 
@@ -44,12 +43,7 @@ class CifStride(Stride):
 
         doc.write_file(str(out_cif), gemmi.cif.Style.Aligned)
 
-        print(f"Stride data added to CIF file: {out_cif}")
-
-
-
-
-
+        print(f"Stride data added to CIF file: {out_cif.resolve()}")
 
     def assign_ss(
         self, input_file: Optional[Path] = None, output_file: Optional[Path] = None, tmp_dir: Optional[TemporaryDirectory] = None   
@@ -78,8 +72,5 @@ class CifStride(Stride):
             input_file=self.pdb_file,
             output_file=self.output_file,
         )
-            
 
-
-
-
+        # self.add_stride_to_cif()

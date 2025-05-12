@@ -63,7 +63,7 @@ def cli():
 
     return args
 
-
+# TODO out_file as a directory currently does not work, need to implement
 def main():
     args = cli()
 
@@ -76,8 +76,10 @@ def main():
                 input_file=args.file,
                 output_file=args.output_dir,
                 binary=args.binary,
-                keep_files=True,
+                keep_file=True,
             )
+            stride.assign_ss()
+
         elif args.cif:
             assert (
                 args.file.suffix == ".cif"
@@ -86,12 +88,13 @@ def main():
                 input_file=args.file,
                 output_file=args.output_dir,
                 binary=args.binary,
-                keep_files=True,
+                keep_file=True,
             )
+            stride.assign_ss()
+            stride.add_stride_to_cif()
         else:
             raise ValueError("Unsupported file type. Use --pdb or --cif.")
 
-        stride.assign_ss()
     elif args.directory:
         if args.pdb:
             for pdb_file in args.directory.glob("*.pdb"):
@@ -99,7 +102,7 @@ def main():
                     input_file=pdb_file,
                     output_file=args.output_dir,
                     binary=args.binary,
-                    bin_dirkeep_files=True,
+                    keep_file=True,
                 )
                 stride.assign_ss()
 
@@ -109,9 +112,10 @@ def main():
                     input_file=cif_file,
                     output_file=args.output_dir,
                     binary=args.binary,
-                    keep_files=True,
+                    keep_file=True,
                 )
                 stride.assign_ss()
+                stride.add_stride_to_cif()
 
         else:
             raise ValueError("Unsupported file type. Use --pdb or --cif.")

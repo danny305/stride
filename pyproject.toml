@@ -37,4 +37,4 @@ torch = "^2.5.0"
 pythonpath = ["."]
 
 [tool.poetry.scripts]
-stride_api = 'stride.cli:main'
+run_stride = 'Stride.cli:main'
