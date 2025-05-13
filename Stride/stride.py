@@ -80,7 +80,7 @@ class Stride:
 
         self._res_metadata: list[ResStrideMetadata] = []
 
-        self.output_fir: Path = kwargs.get("output_dir", None)
+        self.output_dir: Path = kwargs.get("output_dir", None)
 
     @property
     def input_file(self):
@@ -180,6 +180,11 @@ class Stride:
         )
 
         self._res_metadata = []
+
+        if not self.output_file.is_file():
+            print(
+                f"ERROR: Stride output file not found: {self.output_file}.\nExiting.."
+            )
 
         with open(self.output_file, "r") as f:
             while True:
