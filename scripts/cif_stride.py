@@ -6,14 +6,13 @@ from Stride import CifStride
 from Stride.utils import convert_cif_to_pdb
 
 
-
 if __name__=="__main__":
     # Example usage
     cif_file = Path("../data/example/8uke.cif")
-
+    out_dir = Path("../data/example/output_dir")
 
     stride = CifStride()
-    stride.assign_ss(input_file=cif_file)
+    stride.assign_ss(input_file=cif_file, output_dir=out_dir)
     stride.add_stride_to_cif()
 
     # tmp_dir = TemporaryDirectory()
@@ -22,4 +21,3 @@ if __name__=="__main__":
     #     for line in file:
     #         print(line.strip())
     # print(f"Converted {cif_file} to {pdb_file}")
-

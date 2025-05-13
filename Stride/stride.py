@@ -31,6 +31,7 @@ class Stride:
         keep_file: bool = False,
         use_cache: bool = False,
         verbose: bool = False,
+        **kwargs,
     ):
 
         assert isinstance(keep_file, bool), f" must be a boolean: {keep_file}"
@@ -79,6 +80,8 @@ class Stride:
 
         self._res_metadata: list[ResStrideMetadata] = []
 
+        self.output_fir: Path = kwargs.get("output_dir", None)
+
     @property
     def input_file(self):
         return self._input_file
@@ -123,17 +126,28 @@ class Stride:
         self._binary = str(bin_path.resolve())
 
     def assign_ss(
-        self, input_file: Optional[Path] = None, output_file: Optional[Path] = None
+        self,
+        input_file: Optional[Path] = None,
+        output_file: Optional[Path] = None,
+        **kwargs,
     ) -> None:
+
+        if kwargs.get("output_dir", None):
+            self.output_dir = kwargs["output_dir"]
 
         if input_file is not None:
             self.input_file = input_file
 
-        if isinstance(output_file, Path) or output_file is None:
+        if isinstance(output_file, Path):
             self.output_file = output_file
 
+        elif isinstance(self.output_dir, Path):
+            self.output_file = self.output_dir / self.input_file.name
+            self.output_file = self.output_file.with_suffix(".stride")
+            self.output_dir.mkdir(0o774, parents=True, exist_ok=True)
+
         else:
-            raise TypeError("output_file must be a Path object")
+            self.output_file = None
 
         if self.output_file is None:
             self.output_file = self.input_file.with_suffix(".stride")

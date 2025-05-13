@@ -30,7 +30,6 @@ license = ""
 [tool.poetry.dependencies]
 python = "^3.9"
 torch = "^2.5.0"
-# stride = { version = "^1.0.0", source = "stride" } # https://github.com/danny305/stride
 
 
 [tool.pytest.ini_options]

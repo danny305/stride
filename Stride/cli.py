@@ -74,7 +74,7 @@ def main():
             ), f"Input file must be a PDB file: {args.file}"
             stride = Stride(
                 input_file=args.file,
-                output_file=args.output_dir,
+                output_dir=args.output_dir,
                 binary=args.binary,
                 keep_file=True,
             )
@@ -86,7 +86,7 @@ def main():
             ), f"Input file must be a CIF file: {args.file}"
             stride = CifStride(
                 input_file=args.file,
-                output_file=args.output_dir,
+                output_dir=args.output_dir,
                 binary=args.binary,
                 keep_file=True,
             )
@@ -100,7 +100,7 @@ def main():
             for pdb_file in args.directory.glob("*.pdb"):
                 stride = Stride(
                     input_file=pdb_file,
-                    output_file=args.output_dir,
+                    output_dir=args.output_dir,
                     binary=args.binary,
                     keep_file=True,
                 )
@@ -110,7 +110,7 @@ def main():
             for cif_file in args.directory.glob("*.cif"):
                 stride = CifStride(
                     input_file=cif_file,
-                    output_file=args.output_dir,
+                    output_dir=args.output_dir,
                     binary=args.binary,
                     keep_file=True,
                 )

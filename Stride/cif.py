@@ -24,7 +24,7 @@ class CifStride(Stride):
         ), f"input_file must be a PDB or CIF file: {filepath}"  # test if STRIDE works with cif file
         self._input_file = filepath
 
-    def add_stride_to_cif(self) -> None:
+    def add_stride_to_cif(self, **kwargs) -> None:
         assert self.cif_file.is_file(), f"cif not found: {self.cif_file.resolve()}"
 
         doc = gemmi.cif.read_file(str(self.cif_file))
@@ -39,29 +39,34 @@ class CifStride(Stride):
         for res_metadata in self._res_metadata:
             loop.add_row(res_metadata)
 
-        out_cif = self.cif_file.with_suffix(".stride.cif")
+        self.output_dir = kwargs.get("output_dir", self.output_dir)
+
+        if self.output_dir is not None:
+            out_cif = self.output_dir / self.cif_file.name
+            out_cif = out_cif.with_suffix(".stride.cif")
+            self.output_dir.mkdir(0o774, parents=True, exist_ok=True)
+
+        else:
+            out_cif = self.cif_file.with_suffix(".stride.cif")
 
         doc.write_file(str(out_cif), gemmi.cif.Style.Aligned)
 
         print(f"Stride data added to CIF file: {out_cif.resolve()}")
 
     def assign_ss(
-        self, input_file: Optional[Path] = None, output_file: Optional[Path] = None, tmp_dir: Optional[TemporaryDirectory] = None   
+        self,
+        input_file: Optional[Path] = None,
+        output_file: Optional[Path] = None,
+        tmp_dir: Optional[TemporaryDirectory] = None,
+        **kwargs,
     ) -> None:
 
         if input_file is not None:
             self.input_file = input_file
 
-        if isinstance(output_file, Path) or output_file is None:
-            self.output_file = output_file
-
-        else:
-            raise TypeError("output_file must be a Path object")
-
-        if self.output_file is None:
-            self.output_file = self.input_file.with_suffix(".stride")
-        else:
-            self.remove_file = False
+        assert (
+            self.input_file.is_file()
+        ), f"input_file not found: {self.input_file.resolve()}"
 
         # TODO refactor to use a temp directory
         if self.input_file.suffix == ".cif":
@@ -69,8 +74,7 @@ class CifStride(Stride):
             self.pdb_file = convert_cif_to_pdb(self.cif_file, tmp_dir)
 
         super().assign_ss(
-            input_file=self.pdb_file,
-            output_file=self.output_file,
+            input_file=self.pdb_file, output_file=self.output_file, **kwargs
         )
 
         # self.add_stride_to_cif()
