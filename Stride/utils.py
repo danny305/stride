@@ -20,7 +20,11 @@ def convert_cif_to_pdb(cif: Path, temp_dir: Optional[TemporaryDirectory] = None)
         assert isinstance(temp_dir, TemporaryDirectory), f"temp_dir must be a TemporaryDirectory object: {temp_dir}"
         out_pdb = Path(temp_dir.name) / cif.with_suffix(".pdb").name
 
-    st = gemmi.read_structure(str(cif))
+    try:
+        st = gemmi.read_structure(str(cif))
+    except Exception as e:
+        print(f"FAILED: Error reading CIF file: {e}")
+        return None
 
     st.write_pdb(str(out_pdb))
 

@@ -185,6 +185,7 @@ class Stride:
             print(
                 f"ERROR: Stride output file not found: {self.output_file}.\nExiting.."
             )
+            return 
 
         with open(self.output_file, "r") as f:
             while True:

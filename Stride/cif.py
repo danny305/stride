@@ -72,6 +72,11 @@ class CifStride(Stride):
         if self.input_file.suffix == ".cif":
             self.cif_file = self.input_file
             self.pdb_file = convert_cif_to_pdb(self.cif_file, tmp_dir)
+            if self.pdb_file is None:
+                print(
+                    f"Failed to convert CIF file to PDB: {self.cif_file.resolve()}"
+                )
+                return
 
         super().assign_ss(
             input_file=self.pdb_file, output_file=self.output_file, **kwargs

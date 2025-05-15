@@ -58,6 +58,13 @@ def cli():
         action="store_true",
         help="Verbose output",
     )
+    parser.add_argument(
+        "-n",
+        "--n_threads",
+        type=int,
+        default=1,
+        help="Number of threads to use",
+    )
 
     args = parser.parse_args()
 
@@ -107,15 +114,32 @@ def main():
                 stride.assign_ss()
 
         elif args.cif:
-            for cif_file in args.directory.glob("*.cif"):
-                stride = CifStride(
-                    input_file=cif_file,
-                    output_dir=args.output_dir,
-                    binary=args.binary,
-                    keep_file=True,
-                )
-                stride.assign_ss()
-                stride.add_stride_to_cif()
+            if args.n_threads == 1:
+                for cif_file in args.directory.glob("*.cif"):
+                    stride = CifStride(
+                        input_file=cif_file,
+                        output_dir=args.output_dir,
+                        binary=args.binary,
+                        keep_file=True,
+                    )
+                    stride.assign_ss()
+                    stride.add_stride_to_cif()
+            else:
+                if not "pymp" in dir():
+                    import pymp
+                cif_files = list(args.directory.glob("*.cif"))
+                with pymp.Parallel(args.n_threads) as p:
+                    for i in p.range(len(cif_files)):
+                        cif_file = cif_files[i]
+                        
+                        stride = CifStride(
+                            input_file=cif_file,
+                            output_dir=args.output_dir,
+                            binary=args.binary,
+                            keep_file=True,
+                        )
+                        stride.assign_ss()
+                        stride.add_stride_to_cif()
 
         else:
             raise ValueError("Unsupported file type. Use --pdb or --cif.")
